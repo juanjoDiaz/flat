@@ -180,6 +180,29 @@ suite('Flatten', function () {
       'hello.0500': 'darkness my old friend'
     })
   })
+
+  test('Use toString', function () {
+    assert.deepEqual(flatten({
+      hello: {
+        world: {
+          again: 'good morning',
+          toString: function () {
+            return 'good afternoon'
+          }
+        }
+      },
+      lorem: {
+        ipsum: {
+          dolor: 'good evening'
+        }
+      }
+    }, {
+      useToString: true
+    }), {
+      'hello.world': 'good afternoon',
+      'lorem.ipsum.dolor': 'good evening'
+    })
+  })
 })
 
 suite('Unflatten', function () {

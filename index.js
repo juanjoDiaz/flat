@@ -9,6 +9,7 @@ function flatten (target, opts) {
 
   var delimiter = opts.delimiter || '.'
   var maxDepth = opts.maxDepth
+  var toString = opts.useToString
   var output = {}
 
   function step (object, prev, currentDepth) {
@@ -23,16 +24,25 @@ function flatten (target, opts) {
         type === '[object Array]'
       )
 
+      var useToString = false
+      var stringValue = null
+      if (toString && value &&
+        Object.prototype.toString.call(value.toString) === '[object Function]') {
+        stringValue = value.toString()
+        useToString = type !== stringValue
+      }
+
       var newKey = prev
         ? prev + delimiter + key
         : key
 
-      if (!isarray && !isbuffer && isobject && Object.keys(value).length &&
+      if (!isarray && !isbuffer && isobject && !useToString &&
+        Object.keys(value).length &&
         (!opts.maxDepth || currentDepth < maxDepth)) {
         return step(value, newKey, currentDepth + 1)
       }
 
-      output[newKey] = value
+      output[newKey] = useToString ? stringValue : value
     })
   }
 
